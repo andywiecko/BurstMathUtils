@@ -2,7 +2,10 @@
 
 Burst compatible miscellaneous math related utility functions.
 
+## Table od Contents
+
 - [BurstMathUtils](#burstmathutils)
+  - [Table od Contents](#table-od-contents)
   - [Getting started](#getting-started)
   - [Features](#features)
   - [Algebra](#algebra)
@@ -48,6 +51,10 @@ useful functions related to the following categories
 [Geometry](#geometry), and
 [Misc](#misc).
 
+TODO: Add note here related to not adding struct primitives implemetations etc. This should be pure utility package.
+
+TODO: Add note about 2d, 3d will be implemented later.
+
 ## Algebra
 
 ### float Angle(float2 a, float2 b)
@@ -72,7 +79,7 @@ Componentwise minimum of three vectors.
 
 ### float2x2 OuterProduct(float2 a, float2 b)
 
-Outer product of two vectors, i.e. _a_·_b_ᵀ.
+Outer product of two vectors, i.e. _a · bᵀ_.
 
 ### float2 Rotate90CCW(this float2 a)
 
@@ -88,7 +95,7 @@ Diagonal matrix with values _a_ placed in the diagonal.
 
 ### float2x2 Transform(this float2x2 M, float2x2 A)
 
-Transformed matrix _M_, with given transformation A, i.e. _A_ · _M_ · _A_ᵀ.
+Transformed matrix _M_, with given transformation _A_, i.e. _A · M · Aᵀ_.
 
 ## Primitives
 
