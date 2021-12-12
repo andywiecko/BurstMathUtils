@@ -2,6 +2,8 @@
 
 Burst compatible miscellaneous math related utility functions.
 
+Currently, package focuses on 2d related utlilities, but functions for 3d math will be added in the future as well.
+
 ## Table od Contents
 
 - [BurstMathUtils](#burstmathutils)
@@ -30,7 +32,8 @@ Burst compatible miscellaneous math related utility functions.
     - [float PointLineSignedDistance(float2 p, float2 n, float2 a)](#float-pointlinesigneddistancefloat2-p-float2-n-float2-a)
     - [void ShortestLineSegmentBetweenLineSegments(float2 a0, float2 a1, float2 b0, float2 b1, out float2 pA, out float2 pB)](#void-shortestlinesegmentbetweenlinesegmentsfloat2-a0-float2-a1-float2-b0-float2-b1-out-float2-pa-out-float2-pb)
   - [Misc](#misc)
-    - [int BilateralInterleavingId(this int id, int length)](#int-bilateralinterleavingidthis-int-id-int-length)
+    - [int BilateralInterleavingId(int id, int count)](#int-bilateralinterleavingidint-id-int-count)
+  - [Dependencies](#dependencies)
   - [TODO](#todo)
   - [Contributors](#contributors)
 
@@ -50,10 +53,6 @@ useful functions related to the following categories
 [Primitives](#primitives),
 [Geometry](#geometry), and
 [Misc](#misc).
-
-TODO: Add note here related to not adding struct primitives implemetations etc. This should be pure utility package.
-
-TODO: Add note about 2d, 3d will be implemented later.
 
 ## Algebra
 
@@ -135,13 +134,23 @@ Procedure finds the shortest line segment _(pA, pB)_, between line segment _(a0,
 
 ## Misc
 
-### int BilateralInterleavingId(this int id, int length)
+### int BilateralInterleavingId(int id, int count)
 
-TODO: Add summary
+Utility function for _id_ enumeration in bilateral interleaving order,
+e.g. sequence of _id_= 0, 1, 2, 3, 4, 5 (_count_ = 6),
+will be enumerated in the following way: 0, 5, 1, 4, 2, 3.
+
+## Dependencies
+
+- [`Unity.Burst`](https://docs.unity3d.com/Packages/com.unity.burst@1.6/manual/index.html)
+- [`Unity.Mathematics`](https://docs.unity3d.com/Packages/com.unity.mathematics@1.2/manual/index.html)
+- [`Unity.Collections`](https://docs.unity3d.com/Packages/com.unity.collections@1.0/manual/index.html)
+- [`Unity.Jobs`](https://docs.unity3d.com/Manual/JobSystem.html)
 
 ## TODO
 
-- More functions and utilities :)
+- More functions and utilities.
+- CI/CD.
 
 ## Contributors
 
