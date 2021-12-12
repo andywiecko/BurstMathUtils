@@ -1,0 +1,28 @@
+{
+    "name": "com.andywiecko.burst.mathutils",
+    "version": "1.0.0",
+    "displayName": "Burst Math Utils",
+    "description": "Burst compatible miscellaneous math related utility functions.",
+    "unity": "2021.2",
+    "unityRelease": "5f1",
+    "keywords": [
+        "Utilities",
+        "Algebra",
+        "Math",
+        "Geometry",
+        "Burst"
+    ],
+    "author": {
+        "name": "Andrzej Więckowski",
+        "email": "andywiecko@gmail.com",
+        "url": "https://andywiecko.github.io/"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/andywiecko/BurstMathUtils"
+    },
+    "dependencies": {
+        "com.unity.burst": "1.6.3",
+        "com.unity.jobs": "0.11.0-preview.6"
+    }
+}
