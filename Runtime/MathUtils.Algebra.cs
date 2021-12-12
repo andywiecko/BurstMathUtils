@@ -15,7 +15,7 @@ namespace andywiecko.BurstMathUtils
         public static float Cross(float2 a, float2 b) => a.x * b.y - a.y * b.x;
 
         /// <summary>
-        /// Procedures solves eigen problem for symmetric <paramref name="matrix"/>.
+        /// Procedure solves eigen problem for symmetric <paramref name="matrix"/>.
         /// </summary>
         /// <param name="matrix">Matrix to solve.</param>
         /// <param name="eigval">Eigenvalues of the <paramref name="matrix"/>.</param>
@@ -72,9 +72,6 @@ namespace andywiecko.BurstMathUtils
         /// </returns>
         public static float2x2 ToDiag(this float2 a) => math.float2x2(m00: a.x, m01: 0, m10: 0, m11: a.y);
 
-        /// <param name="M"></param>
-        /// <param name="A"></param>
-        /// <param name="inverse"></param>
         /// <returns>
         /// Transformed matrix <paramref name="M"/>, with given transformation <paramref name="A"/>,
         /// i.e. <paramref name="A"/>·<paramref name="M"/>·<paramref name="A"/>ᵀ.

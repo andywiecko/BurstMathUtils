@@ -2,7 +2,7 @@
 
 Burst compatible miscellaneous math related utility functions.
 
-Currently, package focuses on 2d related utlilities, but functions for 3d math will be added in the future as well.
+Currently, the package focuses on 2d related utilities, but functions for 3d math will be added as well.
 
 ## Table od Contents
 
@@ -47,7 +47,7 @@ To use the package choose one of the following:
 
 ## Features
 
-Package contains single static class with utilities (and extensions), i.e. `MathUtils` which includes many
+Package contains a single static class with utilities (and extensions), i.e. `MathUtils` which includes many
 useful functions related to the following categories
 [Algebra](#algebra),
 [Primitives](#primitives),
@@ -66,7 +66,7 @@ Two-dimensional cross product between vectors _a_ and _b_.
 
 ### void EigenDecomposition(float2x2 matrix, out float2 eigval, out float2x2 eigvec)
 
-Procedures solves eigen problem for symmetric _matrix_.
+Procedure solves eigen problem for symmetric _matrix_.
 
 ### float2 Max(float2 a, float2 b, float2 c)
 
@@ -130,14 +130,14 @@ Point–line signed distance.
 
 ### void ShortestLineSegmentBetweenLineSegments(float2 a0, float2 a1, float2 b0, float2 b1, out float2 pA, out float2 pB)
 
-Procedure finds the shortest line segment _(pA, pB)_, between line segment _(a0, a1)_ and _(b0, b1)_
+Procedure finds the shortest line segment _(pA, pB)_, between line segments _(a0, a1)_ and _(b0, b1)_
 
 ## Misc
 
 ### int BilateralInterleavingId(int id, int count)
 
 Utility function for _id_ enumeration in bilateral interleaving order,
-e.g. sequence of _id_= 0, 1, 2, 3, 4, 5 (_count_ = 6),
+e.g. sequence of _id_ = 0, 1, 2, 3, 4, 5 (_count_ = 6),
 will be enumerated in the following way: 0, 5, 1, 4, 2, 3.
 
 ## Dependencies

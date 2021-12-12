@@ -57,7 +57,7 @@ namespace andywiecko.BurstMathUtils
 
         /// <summary>
         /// Procedure finds the shortest line segment (<paramref name="pA"/>, <paramref name="pB"/>),
-        /// between line segment (<paramref name="a0"/>, <paramref name="a1"/>)
+        /// between line segments (<paramref name="a0"/>, <paramref name="a1"/>)
         /// and (<paramref name="b0"/>, <paramref name="b1"/>).
         /// </summary>
         public static void ShortestLineSegmentBetweenLineSegments(float2 a0, float2 a1, float2 b0, float2 b1, out float2 pA, out float2 pB)
