@@ -66,7 +66,7 @@ useful functions related to the following categories
 [Geometry](#geometry), and
 [Misc](#misc).
 
-Additionally package introduces struct [Complex](#complex) struct, a burst-friendly complex number representation.
+Additionally, the package introduces struct [Complex](#complex) struct, a burst-friendly complex number representation.
 
 ## Algebra
 
