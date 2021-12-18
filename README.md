@@ -17,6 +17,8 @@ Currently, the package focuses on 2d related utilities, but functions for 3d mat
     - [float2 Max(float2 a, float2 b, float2 c)](#float2-maxfloat2-a-float2-b-float2-c)
     - [float2 Min(float2 a, float2 b, float2 c)](#float2-minfloat2-a-float2-b-float2-c)
     - [float2x2 OuterProduct(float2 a, float2 b)](#float2x2-outerproductfloat2-a-float2-b)
+    - [void PolarDecomposition(float2x2 A, out float2x2 U)](#void-polardecompositionfloat2x2-a-out-float2x2-u)
+    - [void PolarDecomposition(float2x2 A, out float2x2 U, out float2x2 P)](#void-polardecompositionfloat2x2-a-out-float2x2-u-out-float2x2-p)
     - [float2 Rotate90CCW(this float2 a)](#float2-rotate90ccwthis-float2-a)
     - [float2 Rotate90CW(this float2 a)](#float2-rotate90cwthis-float2-a)
     - [float2x2 ToDiag(this float2 a)](#float2x2-todiagthis-float2-a)
@@ -33,6 +35,16 @@ Currently, the package focuses on 2d related utilities, but functions for 3d mat
     - [void ShortestLineSegmentBetweenLineSegments(float2 a0, float2 a1, float2 b0, float2 b1, out float2 pA, out float2 pB)](#void-shortestlinesegmentbetweenlinesegmentsfloat2-a0-float2-a1-float2-b0-float2-b1-out-float2-pa-out-float2-pb)
   - [Misc](#misc)
     - [int BilateralInterleavingId(int id, int count)](#int-bilateralinterleavingidint-id-int-count)
+  - [Complex](#complex)
+    - [Complex Conjugate(Complex z)](#complex-conjugatecomplex-z)
+    - [Complex LookRotation(float2 direction)](#complex-lookrotationfloat2-direction)
+    - [Complex LookRotationSafe(float2 direction, float2 @default = default)](#complex-lookrotationsafefloat2-direction-float2-default--default)
+    - [Complex Normalize(Complex z)](#complex-normalizecomplex-z)
+    - [Complex NormalizeSafe(Complex z, Complex @default = default)](#complex-normalizesafecomplex-z-complex-default--default)
+    - [Complex Polar(float r, float phi)](#complex-polarfloat-r-float-phi)
+    - [Complex PolarUnit(float phi)](#complex-polarunitfloat-phi)
+    - [Complex Pow(Complex z, float x)](#complex-powcomplex-z-float-x)
+    - [Complex Reciprocal(Complex z)](#complex-reciprocalcomplex-z)
   - [Dependencies](#dependencies)
   - [TODO](#todo)
   - [Contributors](#contributors)
@@ -47,12 +59,14 @@ To use the package choose one of the following:
 
 ## Features
 
-Package contains a single static class with utilities (and extensions), i.e. `MathUtils` which includes many
+Package contains a static class with utilities (and extensions), i.e. `MathUtils` which includes many
 useful functions related to the following categories
 [Algebra](#algebra),
 [Primitives](#primitives),
 [Geometry](#geometry), and
 [Misc](#misc).
+
+Additionally package introduces struct [Complex](#complex) struct, a burst-friendly complex number representation.
 
 ## Algebra
 
@@ -79,6 +93,18 @@ Componentwise minimum of three vectors.
 ### float2x2 OuterProduct(float2 a, float2 b)
 
 Outer product of two vectors, i.e. _a · bᵀ_.
+
+### void PolarDecomposition(float2x2 A, out float2x2 U)
+
+Procedure solves polar decomposition problem for matrix _A_,
+formulated as _A_ = _U_ · _P_, where _U_ a is unitary matrix
+and _P_ is a positive semi-definite Hermitian matrix.
+
+### void PolarDecomposition(float2x2 A, out float2x2 U, out float2x2 P)
+
+Procedure solves polar decomposition problem for matrix _A_,
+formulated as _A_ = _U_ · _P_, where _U_ a is unitary matrix
+and _P_ is a positive semi-definite Hermitian matrix.
 
 ### float2 Rotate90CCW(this float2 a)
 
@@ -139,6 +165,64 @@ Procedure finds the shortest line segment _(pA, pB)_, between line segments _(a0
 Utility function for _id_ enumeration in bilateral interleaving order,
 e.g. sequence of _id_ = 0, 1, 2, 3, 4, 5 (_count_ = 6),
 will be enumerated in the following way: 0, 5, 1, 4, 2, 3.
+
+## Complex
+
+Struct complex is a burst-friendly complex number representation.
+It supports basic arthimetic operators `+, -, *, /`.
+Complex struct implementation is based on `Unity.Collections.float2` so all functions/operations should be optimized using Burst SIMD intrinsics.
+
+Small demo how `Complex` can be used is presented below
+
+```csharp
+Complex z = (1.2f, 5.7f);
+z += 1f; // Expected: z = (2.2f, 5.7f)
+
+z = (0, -1);
+z *= z; // Expected: z = (-1, 0)
+
+z = Complex.Polar(r: 2, phi: math.PI); // Returns 2 * exp(i * PI)
+```
+
+Additional utility functions for complex numbers can be found below.
+
+### Complex Conjugate(Complex z)
+
+Conjugated number _z_, i.e. _z_*.
+
+### Complex LookRotation(float2 direction)
+
+Complex number which represent view in the given direction.
+
+### Complex LookRotationSafe(float2 direction, float2 @default = default)
+
+Complex number which represent view in the given direction.
+If rotation cannot be represented by the finite number, then returns _default_.
+
+### Complex Normalize(Complex z)
+
+Normalized complex number _z_.
+
+### Complex NormalizeSafe(Complex z, Complex @default = default)
+
+Normalized complex number _z_.
+If normalized number cannot be represented by the finite number, then returns _default_.
+
+### Complex Polar(float r, float phi)
+
+Complex number via polar construction: _r_ · eⁱᵠ.
+
+### Complex PolarUnit(float phi)
+
+Complex number via (unit length) polar construction: _r_ · eⁱᵠ.
+
+### Complex Pow(Complex z, float x)
+
+_z_ raised to the power _x_, i.e. _zˣ_.
+
+### Complex Reciprocal(Complex z)
+
+Repciprocal of _z_, i.e. _z⁻¹_.
 
 ## Dependencies
 
