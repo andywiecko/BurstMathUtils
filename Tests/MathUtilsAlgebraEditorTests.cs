@@ -94,5 +94,57 @@ namespace andywiecko.BurstMathUtils.Editor.Tests
             Assert.That(eigval, Is.EqualTo(expectedEigval));
             Assert.That(eigvec, Is.EqualTo(expectedEigvec).Using(Float2x2Comparer.Instance));
         }
+
+        private static readonly TestCaseData[] polarDecompositionTestData = new[]
+        {
+            new TestCaseData(float2x2.identity) { TestName = "Case 1 – identity test.", ExpectedResult = float2x2.identity },
+
+            new TestCaseData(math.float2x2
+            (
+                math.cos(2.343f), -math.sin(2.343f),
+                math.sin(2.343f), math.cos(2.343f)
+            ))
+            {
+                TestName = "Case 2 – pure unitary test.",
+                ExpectedResult = math.float2x2
+                (
+                    math.cos(2.343f), -math.sin(2.343f),
+                    math.sin(2.343f), math.cos(2.343f)
+                )
+            },
+
+            new TestCaseData(math.mul(math.float2x2
+            (
+                math.cos(2.34f), -math.sin(2.34f),
+                math.sin(2.34f), math.cos(2.34f)
+            ), math.float2x2(
+                2, 1,
+                1, 3
+            )))
+            {
+                TestName = "Case 3 – general case",
+                ExpectedResult = math.float2x2
+                (
+                    math.cos(2.34f), -math.sin(2.34f),
+                    math.sin(2.34f), math.cos(2.34f)
+                )
+            }
+        };
+
+        [Test, TestCaseSource(nameof(polarDecompositionTestData))]
+        public float2x2 PolarDecompositionTest(float2x2 A)
+        {
+            MathUtils.PolarDecomposition(A, out var U);
+            return U;
+        }
+
+        [Test, TestCaseSource(nameof(polarDecompositionTestData))]
+        public float2x2 PolarDecompositionWithPositiveSemidefinitePartTest(float2x2 A)
+        {
+            MathUtils.PolarDecomposition(A, out var U, out var P);
+
+            Assert.That(A, Is.EqualTo(math.mul(U, P)));
+            return U;
+        }
     }
 }

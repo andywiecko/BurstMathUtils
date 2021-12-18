@@ -57,6 +57,35 @@ namespace andywiecko.BurstMathUtils
         /// </returns>
         public static float2x2 OuterProduct(float2 a, float2 b) => math.float2x2(a * b[0], a * b[1]);
 
+        /// <summary>
+        /// Procedure solves polar decomposition problem for matrix <paramref name="A"/>,
+        /// formulated as <paramref name="A"/> = <paramref name="U"/>·P, 
+        /// where <paramref name="U"/> a is unitary matrix
+        /// and P is a positive semi-definite Hermitian matrix.
+        /// </summary>
+        /// <param name="A">Invertible matrix.</param>
+        /// <param name="U">Unitary matrix.</param>
+        public static void PolarDecomposition(float2x2 A, out float2x2 U)
+        {
+            U = A + math.determinant(A) * math.inverse(math.transpose(A));
+            U *= math.rsqrt(math.abs(math.determinant(U)));
+        }
+
+        /// <summary>
+        /// Procedure solves polar decomposition problem for matrix <paramref name="A"/>,
+        /// formulated as <paramref name="A"/> = <paramref name="U"/>·<paramref name="P"/>, 
+        /// where <paramref name="U"/> a is unitary matrix
+        /// and <paramref name="P"/> is a positive semi-definite Hermitian matrix.
+        /// </summary>
+        /// <param name="A">Invertible matrix.</param>
+        /// <param name="U">Unitary matrix.</param>
+        /// <param name="P">Positive semi-definite Hermitian matrix.</param>
+        public static void PolarDecomposition(float2x2 A, out float2x2 U, out float2x2 P)
+        {
+            PolarDecomposition(A, out U);
+            P = math.mul(math.transpose(U), A);
+        }
+
         /// <returns>
         /// Rotated vector <paramref name="a"/> by 90° (counter-clockwise).
         /// </returns>
