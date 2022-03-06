@@ -178,7 +178,7 @@ Small demo how `Complex` can be used is presented below
 Complex z = (1.2f, 5.7f);
 z += 1f; // Expected: z = (2.2f, 5.7f)
 
-z = (0, -1);
+z = (0, 1);
 z *= z; // Expected: z = (-1, 0)
 
 z = Complex.Polar(r: 2, phi: math.PI); // Returns 2 * exp(i * PI)
