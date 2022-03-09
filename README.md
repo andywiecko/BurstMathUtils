@@ -19,10 +19,12 @@ Currently, the package focuses on 2d related utilities, but functions for 3d mat
     - [float2x2 OuterProduct(float2 a, float2 b)](#float2x2-outerproductfloat2-a-float2-b)
     - [void PolarDecomposition(float2x2 A, out float2x2 U)](#void-polardecompositionfloat2x2-a-out-float2x2-u)
     - [void PolarDecomposition(float2x2 A, out float2x2 U, out float2x2 P)](#void-polardecompositionfloat2x2-a-out-float2x2-u-out-float2x2-p)
+    - [float2 Right()](#float2-right)
     - [float2 Rotate90CCW(this float2 a)](#float2-rotate90ccwthis-float2-a)
     - [float2 Rotate90CW(this float2 a)](#float2-rotate90cwthis-float2-a)
     - [float2x2 ToDiag(this float2 a)](#float2x2-todiagthis-float2-a)
     - [float2x2 Transform(this float2x2 M, float2x2 A)](#float2x2-transformthis-float2x2-m-float2x2-a)
+    - [float2 Up()](#float2-up)
   - [Primitives](#primitives)
     - [(float2 p, float r) TriangleBoundingCircle(float2 a, float2 b, float2 c)](#float2-p-float-r-triangleboundingcirclefloat2-a-float2-b-float2-c)
     - [(float2 p, float r) TriangleCircumcenter(float2 a, float2 b, float2 c)](#float2-p-float-r-trianglecircumcenterfloat2-a-float2-b-float2-c)
@@ -105,6 +107,10 @@ Procedure solves polar decomposition problem for matrix _A_,
 formulated as _A_ = _U_ · _P_, where _U_ a is unitary matrix
 and _P_ is a positive semi-definite Hermitian matrix.
 
+### float2 Right()
+
+Right axis (1, 0).
+
 ### float2 Rotate90CCW(this float2 a)
 
 Rotated vector _a_ by 90° (counter-clockwise).
@@ -120,6 +126,10 @@ Diagonal matrix with values _a_ placed in the diagonal.
 ### float2x2 Transform(this float2x2 M, float2x2 A)
 
 Transformed matrix _M_, with given transformation _A_, i.e. _A · M · Aᵀ_.
+
+### float2 Up()
+
+Up axis (0, 1).
 
 ## Primitives
 

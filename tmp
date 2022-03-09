@@ -1,0 +1,26 @@
+        public static Complex PolarDecompositionApprox(float2x2 A, Complex z, uint maxIters = 10)
+        {
+            const float eps = 1e-9f;
+            for (int i = 0; i < maxIters; i++)
+            {
+                var R = z.ToMatrix();
+                var omega = (Cross(R.c0, A.c0) + Cross(R.c1, A.c1)) / (math.abs(math.dot(R.c0, A.c0) + math.dot(R.c1, A.c1)) + eps);
+                
+                if (omega < eps * eps)
+                {
+                    UnityEngine.Debug.Log(i);
+                    break;
+                }
+
+                z = Complex.PolarUnit(omega) * z;
+                z = Complex.Normalize(z);
+            }
+
+            return z;
+        }
+
+                public static Complex PolarDecompositionApprox(float2x2 A, uint maxIters = 10) => PolarDecompositionApprox(A, Complex.Normalize(new Complex(A)), maxIters);
+
+        public static float FrobeniusNorm(float2x2 A) => math.lengthsq(A.c0) + math.lengthsq(A.c1);
+
+        public static float2x2 ToMatrix(this Complex z) => math.float2x2(z.Re, -z.Im, z.Im, z.Re);

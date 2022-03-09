@@ -87,6 +87,11 @@ namespace andywiecko.BurstMathUtils
         }
 
         /// <returns>
+        /// Right axis (1, 0).
+        /// </returns>
+        public static float2 Right() => math.right().xy;
+
+        /// <returns>
         /// Rotated vector <paramref name="a"/> by 90° (counter-clockwise).
         /// </returns>
         public static float2 Rotate90CCW(this float2 a) => math.float2(-a.y, a.x);
@@ -106,5 +111,10 @@ namespace andywiecko.BurstMathUtils
         /// i.e. <paramref name="A"/>·<paramref name="M"/>·<paramref name="A"/>ᵀ.
         /// </returns>
         public static float2x2 Transform(this float2x2 M, float2x2 A) => math.mul(A, math.mul(M, math.transpose(A)));
+
+        /// <returns>
+        /// Up axis (0, 1).
+        /// </returns>
+        public static float2 Up() => math.up().xy;
     }
 }

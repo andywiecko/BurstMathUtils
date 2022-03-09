@@ -4,6 +4,48 @@ namespace andywiecko.BurstMathUtils
 {
     public static partial class MathUtils
     {
+        public static float2 Barycentric(float2 a, float2 b, float2 p)
+        {
+            var norm2 = math.distancesq(a, b);
+            float2 bar;
+            bar.x = math.dot(p - b, a - b) / norm2;
+            bar.y = 1 - bar.x;
+            return bar;
+        }
+
+        public static float2 BarycentricSafe(float2 a, float2 b, float2 p, float2 @default = default)
+        {
+            return math.distancesq(a, b) <= math.EPSILON ? @default : Barycentric(a, b, p);
+        }
+
+        public static float3 Barycentric(float2 a, float2 b, float2 c, float2 p)
+        {
+            var v0 = b - a;
+            var v1 = c - a;
+            var v2 = p - a;
+            var d00 = math.dot(v0, v0);
+            var d01 = math.dot(v0, v1);
+            var d11 = math.dot(v1, v1);
+            var d20 = math.dot(v2, v0);
+            var d21 = math.dot(v2, v1);
+            var denom = d00 * d11 - d01 * d01;
+            var v = (d11 * d20 - d01 * d21) / denom;
+            var w = (d00 * d21 - d01 * d20) / denom;
+            var u = 1 - v - w;
+            return math.float3(u, v, w);
+        }
+
+        public static float3 BarycentricSafe(float2 a, float2 b, float2 c, float2 p, float3 @default = default)
+        {
+            var v0 = b - a;
+            var v1 = c - a;
+            var d00 = math.dot(v0, v0);
+            var d01 = math.dot(v0, v1);
+            var d11 = math.dot(v1, v1);
+            var denom = d00 * d11 - d01 * d01;
+            return math.abs(denom) <= math.EPSILON ? @default : Barycentric(a, b, c, p);
+        }
+
         /// <summary>
         /// Procedure finds the closest point <paramref name="p"/> 
         /// on the line segment (<paramref name="b0"/>, <paramref name="b1"/>)
@@ -45,6 +87,125 @@ namespace andywiecko.BurstMathUtils
             var s = area2inv * (a.y * c.x - a.x * c.y + (c.y - a.y) * p.x + (a.x - c.x) * p.y);
             var t = area2inv * (a.x * b.y - a.y * b.x + (a.y - b.y) * p.x + (b.x - a.x) * p.y);
             return s >= 0 && t >= 0 && 1 - s - t >= 0;
+        }
+
+        /// <summary>
+        /// Procedure resolves point–line segment continuous intersection for point <em>p</em> and line segment (<em>a</em>, <em>b</em>).
+        /// It solves for the first valid intersection assuming starting positions 
+        /// <paramref name="p0"/> and (<paramref name="a0"/>, <paramref name="b0"/>),
+        /// and final positions as <paramref name="p1"/> and (<paramref name="a1"/>, <paramref name="b1"/>).
+        /// Intersection time <paramref name="t"/> is defined in range [0, 1]
+        /// and intersection point <paramref name="s"/> in range [0, 1], where 0 corresponds to <em>a</em> and 1 to <em>b</em>.
+        /// </summary>
+        /// <remarks>
+        /// Assumes constant velocities for all points <em>p</em>, <em>a</em>, and <em>b</em>.
+        /// </remarks>
+        /// <returns>
+        /// <see langword="true"/> if intersection occurs, <see langword="false"/> otherwise.
+        /// </returns>
+        public static bool PointLineSegmentContinuousIntersection(
+            float2 p0, float2 p1,
+            float2 a0, float2 a1,
+            float2 b0, float2 b1,
+            out float t, out float s)
+        {
+            t = s = default;
+
+            var pd = p1 - p0;
+            var ad = a1 - a0;
+            var bd = b1 - b0;
+
+            var A = Cross(ad, bd) + Cross(bd, pd) + Cross(pd, ad);
+            var B = Cross(a0, bd) + Cross(ad, b0) + Cross(b0, pd) + Cross(bd, p0) + Cross(p0, ad) + Cross(pd, a0);
+            var C = Cross(a0, b0) + Cross(b0, p0) + Cross(p0, a0);
+            if (A == 0)
+            {
+                // linear equation
+                if (B != 0)
+                {
+                    t = -C / B;
+                    s = S(t);
+                    return s >= 0 && s <= 1 && t >= 0 && t <= 1;
+                }
+                else if (B == 0 && C == 0)
+                {
+                    // TODO: missing case when point intersecst at start
+                    // TODO: missing zero velocity case
+
+                    // All points are collinear in time
+                    var t0 = -math.dot(p0 - a0, pd - ad) / math.distancesq(pd, ad);
+                    var t1 = -math.dot(p0 - b0, pd - bd) / math.distancesq(pd, bd);
+
+                    var tp = math.float2(t0, t1);
+                    var inRange = tp >= 0 & tp <= 1;
+                    if (math.all(inRange))
+                    {
+                        t = math.select(t0, t1, t0 < t1);
+                        s = math.select(0, 1, t0 < t1);
+                        return true;
+                    }
+                    else if (inRange[0])
+                    {
+                        (t, s) = (t0, 0);
+                        return true;
+                    }
+                    else if (inRange[1])
+                    {
+                        (t, s) = (t1, 1);
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            var delta = B * B - 4 * A * C;
+
+            if (delta < 0)
+            {
+                return false;
+            }
+            else if (delta == 0)
+            {
+                t = -B / (2 * A);
+                s = S(t);
+                return true;
+            }
+            else
+            {
+                var deltaSqrt = math.sqrt(delta);
+                var t0 = (-B - deltaSqrt) / (2 * A);
+                var t1 = (-B + deltaSqrt) / (2 * A);
+                var tp = math.float2(t0, t1);
+                var inRange = tp >= 0 & tp <= 1;
+                if (inRange[0])
+                {
+                    (t, s) = (t0, S(t0));
+                    return true;
+                }
+
+                if (inRange[1])
+                {
+                    (t, s) = (t1, S(t1));
+                    return true;
+                }
+
+                return false;
+            }
+
+            float S(float t)
+            {
+                var x = a0 + ad * t;
+                var y = b0 + bd * t;
+                var z = p0 + pd * t;
+                return math.dot(z - x, y - x) / math.distancesq(x, y);
+            }
         }
 
         /// <param name="p">Point of interest.</param>

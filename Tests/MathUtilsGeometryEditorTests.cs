@@ -5,8 +5,42 @@ namespace andywiecko.BurstMathUtils.Editor.Tests
 {
     public class MathUtilsGeometryEditorTests
     {
+        private static readonly TestCaseData[] barycentric2TestData = new[]
+        {
+            new TestCaseData(math.float2(0, 0), math.float2(10, 0), math.float2(5, 0))
+            { ExpectedResult = math.float2(0.5f, 0.5f), TestName = "Case 1" },
+            new TestCaseData(math.float2(0, 0), math.float2(1, 0), math.float2(0, 0))
+            { ExpectedResult = math.float2(1, 0), TestName = "Case 2" },
+            new TestCaseData(math.float2(0, 0), math.float2(1, 0), math.float2(1, 0))
+            { ExpectedResult = math.float2(0, 1), TestName = "Case 3" },
+            new TestCaseData(math.float2(0, 0), math.float2(1, 0), math.float2(-1, 0))
+            { ExpectedResult = math.float2(2, -1), TestName = "Case 4" },
+        };
+
+        [Test, TestCaseSource(nameof(barycentric2TestData))]
+        public float2 Barycentric2Test(float2 a, float2 b, float2 p) => MathUtils.Barycentric(a, b, p);
+
+        private static readonly TestCaseData[] barycentric3TestData = new[]
+        {
+            new TestCaseData(math.float2(0, 0), math.float2(1, 0), math.float2(0.5f, math.sqrt(3) / 2), math.float2(0.5f, math.sqrt(3) / 6))
+            { ExpectedResult = MathUtils.Round((float3) 1 / 3, 6), TestName = "Case 1 (barycenter)" },
+            new TestCaseData(math.float2(0, 0), math.float2(1, 0), math.float2(0.5f, math.sqrt(3) / 2), math.float2(0, 0))
+            { ExpectedResult = math.float3(1, 0, 0), TestName = "Case 2 (point a)" },
+            new TestCaseData(math.float2(0, 0), math.float2(1, 0), math.float2(0.5f, math.sqrt(3) / 2), math.float2(1, 0))
+            { ExpectedResult = math.float3(0, 1, 0), TestName = "Case 3 (point b)" },
+            new TestCaseData(math.float2(0, 0), math.float2(1, 0), math.float2(0.5f, math.sqrt(3) / 2), math.float2(0.5f, math.sqrt(3) / 2))
+            { ExpectedResult = math.float3(0, 0, 1), TestName = "Case 4 (point c)" },
+            new TestCaseData(math.float2(0, 0), math.float2(1, 0), math.float2(0.5f, math.sqrt(3) / 2), math.float2(0.5f, 0))
+            { ExpectedResult = math.float3(0.5f, 0.5f, 0), TestName = "Case 5 (center ab)" },
+            new TestCaseData(math.float2(0, 0), math.float2(1, 0), math.float2(0.5f, math.sqrt(3) / 2), math.float2(0.25f, 0.25f))
+            { ExpectedResult = MathUtils.Round(math.float3(0.605662f, 0.105662f, 0.288675f), 6), TestName = "Case 6 (arbitrary point)" },
+        };
+
+        [Test, TestCaseSource(nameof(barycentric3TestData))]
+        public float3 Barycentric3Test(float2 a, float2 b, float2 c, float2 p) => MathUtils.Round(MathUtils.Barycentric(a, b, c, p), 6);
+
         private static readonly TestCaseData[] shortestLineSegmentBetweenLineSegmentsTestData = new[]
-{
+        {
             new TestCaseData
             ((
                 a0: math.float2(0, 0),
@@ -206,5 +240,121 @@ namespace andywiecko.BurstMathUtils.Editor.Tests
 
         [Test, TestCaseSource(nameof(pointInsideTriangleTestData))]
         public bool PointInsideTriangleTest((float2 p, float2 a, float2 b, float2 c) data) => MathUtils.PointInsideTriangle(data.p, data.a, data.b, data.c);
+
+        private static readonly TestCaseData[] movingPointLineSegmentIntersectionTestData = new[]
+        {
+            new TestCaseData(
+                /*p0*/ 0 * MathUtils.Right(), /*p1*/ 2 * MathUtils.Right(),
+                /*a0*/ 1 * MathUtils.Right(), /*a1*/ 1 * MathUtils.Right(),
+                /*b0*/ 3 * MathUtils.Right(), /*b1*/ 3 * MathUtils.Right()
+                )
+            {
+                ExpectedResult = (true, 0.5f, 0f),
+                TestName = "Test case 1a (sideways left)"
+            },
+            new TestCaseData(
+                /*p0*/ 4 * MathUtils.Right(), /*p1*/ 2 * MathUtils.Right(),
+                /*a0*/ 1 * MathUtils.Right(), /*a1*/ 1 * MathUtils.Right(),
+                /*b0*/ 3 * MathUtils.Right(), /*b1*/ 3 * MathUtils.Right()
+                )
+            {
+                ExpectedResult = (true, 0.5f, 1f),
+                TestName = "Test case 1b (sideways right)"
+            },
+            new TestCaseData(
+                /*p0*/ 0 * MathUtils.Right(), /*p1*/ 0.5f * MathUtils.Right(),
+                /*a0*/ 1 * MathUtils.Right(), /*a1*/ 1 * MathUtils.Right(),
+                /*b0*/ 3 * MathUtils.Right(), /*b1*/ 3 * MathUtils.Right()
+                )
+            {
+                ExpectedResult = (false, 0f, 0f),
+                TestName = "Test case 1c (sideways no-collision)"
+            },
+            new TestCaseData(
+                /*p0*/ 0 * MathUtils.Right(), /*p1*/ 2 * MathUtils.Right(),
+                /*a0*/ 3 * MathUtils.Right(), /*a1*/ 3 * MathUtils.Right(),
+                /*b0*/ 1 * MathUtils.Right(), /*b1*/ 1 * MathUtils.Right()
+                )
+            {
+                ExpectedResult = (true, 0.5f, 1f),
+                TestName = "Test case 1d (sideways swapped)"
+            },
+            new TestCaseData(
+                /*p0*/ -1 * MathUtils.Up(), /*p1*/ 1 * MathUtils.Up(),
+                /*a0*/ -1 * MathUtils.Right(), /*a1*/ -1 * MathUtils.Right(),
+                /*b0*/ 1 * MathUtils.Right(), /*b1*/ 1 * MathUtils.Right()
+                )
+            {
+                ExpectedResult = (true, 0.5f, 0.5f),
+                TestName = "Test case 2a (simple crossing)"
+            },
+            new TestCaseData(
+                /*p0*/ -1 * MathUtils.Up(), /*p1*/ 1 * MathUtils.Up(),
+                /*a0*/ 1 * MathUtils.Right(), /*a1*/ 1 * MathUtils.Right(),
+                /*b0*/ 2 * MathUtils.Right(), /*b1*/ 2 * MathUtils.Right()
+                )
+            {
+                ExpectedResult = (false, 0.5f, -1f),
+                TestName = "Test case 2b (simple crossing no-collision)"
+            },
+            new TestCaseData(
+                /*p0*/ 2 * MathUtils.Up(), /*p1*/ 1 * MathUtils.Up(),
+                /*a0*/ 0 * MathUtils.Right(), /*a1*/ 0 * MathUtils.Right(),
+                /*b0*/ 2 * MathUtils.Right(), /*b1*/ 2 * MathUtils.Right()
+                )
+            {
+                ExpectedResult = (false, 2f, 0f),
+                TestName = "Test case 2c (simple crossing no-collision)"
+            },
+            new TestCaseData(
+                /*p0*/ (float2)1, /*p1*/ (float2)1,
+                /*a0*/ 0 * MathUtils.Up(), /*a1*/ 5 * MathUtils.Up(),
+                /*b0*/ 5 * MathUtils.Right(), /*b1*/ 0 * MathUtils.Right()
+                )
+            {
+                ExpectedResult = (true, 2f / (5 + math.sqrt(5)), 2f / (5 + math.sqrt(5))),
+                TestName = "Test case 3a (raise, delta > 0)"
+            },
+            new TestCaseData(
+                /*p0*/ (float2)5, /*p1*/ (float2)5,
+                /*a0*/ 0 * MathUtils.Up(), /*a1*/ 5 * MathUtils.Up(),
+                /*b0*/ 5 * MathUtils.Right(), /*b1*/ 0 * MathUtils.Right()
+                )
+            {
+                ExpectedResult = (false, 0f, 0f),
+                TestName = "Test case 3b (raise no-collision, delta < 0)"
+            },
+            new TestCaseData(
+                /*p0*/ 5 * MathUtils.Up(), /*p1*/ 5 * MathUtils.Up(),
+                /*a0*/ 0 * MathUtils.Up(), /*a1*/ 5 * MathUtils.Up(),
+                /*b0*/ 5 * MathUtils.Right(), /*b1*/ 0 * MathUtils.Right()
+                )
+            {
+                ExpectedResult = (true, 1f, 0f),
+                TestName = "Test case 3c (raise, delta = 0)"
+            },
+            new TestCaseData(
+                /*p0*/ 5 * MathUtils.Up(), /*p1*/ 5 * MathUtils.Up(),
+                /*a0*/ 5 * MathUtils.Right(), /*a1*/ 0 * MathUtils.Right(),
+                /*b0*/ 0 * MathUtils.Up(), /*b1*/ 5 * MathUtils.Up()
+                )
+            {
+                ExpectedResult = (true, 1f, 1f),
+                TestName = "Test case 3d (raise swapped, delta = 0)"
+            },
+            new TestCaseData(
+                /*p0*/ 1 * MathUtils.Right(), /*p1*/ 1 * MathUtils.Right(),
+                /*a0*/ 0 * MathUtils.Right(), /*a1*/ 0 * MathUtils.Right(),
+                /*b0*/ 5 * MathUtils.Right(), /*b1*/ 5 * MathUtils.Right()
+                )
+            {
+                ExpectedResult = (true, 1f, 1f),
+                TestName = "Test case 4 (zero velocity case)"
+            }
+        };
+
+        [Test, TestCaseSource(nameof(movingPointLineSegmentIntersectionTestData))]
+        public (bool i, float t, float s) MovingPointLineSegmentIntersectionTest(float2 p0, float2 p1, float2 a0, float2 a1, float2 b0, float2 b1) =>
+            (MathUtils.PointLineSegmentContinuousIntersection(p0, p1, a0, a1, b0, b1, out var t, out var s), t, s);
     }
 }
