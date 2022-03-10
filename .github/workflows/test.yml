@@ -31,7 +31,7 @@ jobs:
           key: Library-${{ matrix.projectPath }}
           restore-keys: |
             Library-
-      - uses: game-ci/unity-test-runner@db9152881fdd36e9e9dea7c6668ba9aa76846321
+      - uses: game-ci/unity-test-runner@441ad80ded43cd93dcc230454e79089a052da7c0
         id: tests
         with:
           projectPath: ${{ matrix.projectPath }}
