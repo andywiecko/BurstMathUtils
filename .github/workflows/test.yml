@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         projectPath:
-          - Tests
+          - ./
         unityVersion:
           - 2021.2.5f1
         testMode:
