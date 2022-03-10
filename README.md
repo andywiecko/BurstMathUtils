@@ -46,7 +46,6 @@ Currently, the package focuses on 2d related utilities, but functions for 3d mat
     - [Complex Pow(Complex z, float x)](#complex-powcomplex-z-float-x)
     - [Complex Reciprocal(Complex z)](#complex-reciprocalcomplex-z)
   - [Dependencies](#dependencies)
-  - [TODO](#todo)
   - [Contributors](#contributors)
 
 ## Getting started
@@ -229,12 +228,7 @@ Repciprocal of _z_, i.e. _z⁻¹_.
 - [`Unity.Burst`](https://docs.unity3d.com/Packages/com.unity.burst@1.6/manual/index.html)
 - [`Unity.Mathematics`](https://docs.unity3d.com/Packages/com.unity.mathematics@1.2/manual/index.html)
 - [`Unity.Collections`](https://docs.unity3d.com/Packages/com.unity.collections@1.0/manual/index.html)
-- [`Unity.Jobs`](https://docs.unity3d.com/Manual/JobSystem.html)
-
-## TODO
-
-- More functions and utilities.
-- CI/CD.
+- [`Unity.Jobs`](https://docs.unity3d.com/Packages/com.unity.jobs@0.11/manual/index.html)
 
 ## Contributors
 
