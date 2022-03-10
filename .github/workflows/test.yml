@@ -19,7 +19,7 @@ jobs:
         unityVersion:
           - 2021.2.5f1
         testMode:
-          - playmode
+          #- playmode
           - editmode
     steps:
       - uses: actions/checkout@v3
