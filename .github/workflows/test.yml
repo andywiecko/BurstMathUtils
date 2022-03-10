@@ -31,13 +31,14 @@ jobs:
           key: Library-${{ matrix.projectPath }}
           restore-keys: |
             Library-
-      - uses: game-ci/unity-test-runner@v2.0-alpha-2
+      - uses: trudeaua21/unity-test-runner@v2
         id: tests
         with:
           projectPath: ${{ matrix.projectPath }}
           unityVersion: ${{ matrix.unityVersion }}
           testMode: ${{ matrix.testMode }}
           artifactsPath: ${{ matrix.testMode }}-artifacts
+          packageMode: true
       - uses: actions/upload-artifact@v1
         with:
           name: Test results for ${{ matrix.testMode }}
