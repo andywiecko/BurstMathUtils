@@ -20,31 +20,49 @@ namespace andywiecko.BurstMathUtils
 
         public static float3 Barycentric(float2 a, float2 b, float2 c, float2 p)
         {
-            var v0 = b - a;
-            var v1 = c - a;
-            var v2 = p - a;
-            var d00 = math.dot(v0, v0);
-            var d01 = math.dot(v0, v1);
-            var d11 = math.dot(v1, v1);
-            var d20 = math.dot(v2, v0);
-            var d21 = math.dot(v2, v1);
-            var denom = d00 * d11 - d01 * d01;
-            var v = (d11 * d20 - d01 * d21) / denom;
-            var w = (d00 * d21 - d01 * d20) / denom;
-            var u = 1 - v - w;
+            var (v0, v1, v2) = (b - a, c - a, p - a);
+            var denInv = 1 / Cross(v0, v1);
+            var v = denInv * Cross(v2, v1);
+            var w = denInv * Cross(v0, v2);
+            var u = 1.0f - v - w;
             return math.float3(u, v, w);
         }
 
         public static float3 BarycentricSafe(float2 a, float2 b, float2 c, float2 p, float3 @default = default)
         {
-            var v0 = b - a;
-            var v1 = c - a;
-            var d00 = math.dot(v0, v0);
-            var d01 = math.dot(v0, v1);
-            var d11 = math.dot(v1, v1);
-            var denom = d00 * d11 - d01 * d01;
-            return math.abs(denom) <= math.EPSILON ? @default : Barycentric(a, b, c, p);
+            var (v0, v1) = (b - a, c - a);
+            var den = Cross(v0, v1);
+            return math.abs(den) <= math.EPSILON ? @default : Barycentric(a, b, c, p);
         }
+
+        /// <summary>
+        /// Triangle (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>) 
+        /// counterclockwise check.
+        /// </summary>
+        /// <param name="a">Triangle (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>) vertex position.</param>
+        /// <param name="b">Triangle (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>) vertex position.</param>
+        /// <param name="c">Triangle (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>) vertex position.</param>
+        /// <returns>
+        /// <list type="bullet">
+        /// <item><see langword="+1"/> ? triangle is counterclockwise.</item>
+        /// <item><see langword="0"/> ? triangle is degenerate (colinear points).</item>
+        /// <item><see langword="-1"/> ? triangle is clockwise.</item>
+        /// </list>
+        /// </returns>
+        public static float CCW(float2 a, float2 b, float2 c) => math.sign(Cross(b - a, c - a));
+
+        /// <param name="a">Quadrilateral (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>, <paramref name="d"/>) vertex position.</param>
+        /// <param name="b">Quadrilateral (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>, <paramref name="d"/>) vertex position.</param>
+        /// <param name="c">Quadrilateral (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>, <paramref name="d"/>) vertex position.</param>
+        /// <param name="d">Quadrilateral (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>, <paramref name="d"/>) vertex position.</param>
+        /// <returns>
+        /// <see langword="true"/> if quadrilateral 
+        /// (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>, <paramref name="d"/>)
+        /// is convex, <see langword="false"/> otherwise.
+        /// </returns>
+        public static bool IsConvexQuadrilateral(float2 a, float2 b, float2 c, float2 d) =>
+            CCW(a, c, b) != 0 && CCW(a, c, d) != 0 && CCW(b, d, a) != 0 && CCW(b, d, c) != 0 && // colinear checks
+            CCW(a, c, b) != CCW(a, c, d) && CCW(b, d, a) != CCW(b, d, c); // diagonal intersection checks
 
         /// <summary>
         /// Procedure finds the closest point <paramref name="p"/> 
@@ -81,13 +99,8 @@ namespace andywiecko.BurstMathUtils
         /// (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>), 
         /// <see langword="false"/> otherwise.
         /// </returns>
-        public static bool PointInsideTriangle(float2 p, float2 a, float2 b, float2 c)
-        {
-            var area2inv = 1 / Cross(b - a, c - a);
-            var s = area2inv * (a.y * c.x - a.x * c.y + (c.y - a.y) * p.x + (a.x - c.x) * p.y);
-            var t = area2inv * (a.x * b.y - a.y * b.x + (a.y - b.y) * p.x + (b.x - a.x) * p.y);
-            return s >= 0 && t >= 0 && 1 - s - t >= 0;
-        }
+        public static bool PointInsideTriangle(float2 p, float2 a, float2 b, float2 c) =>
+            math.cmax(-Barycentric(a, b, c, p)) <= 0;
 
         /// <summary>
         /// Procedure resolves point–line segment continuous intersection for point <em>p</em> and line segment (<em>a</em>, <em>b</em>).
