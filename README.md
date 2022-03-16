@@ -19,22 +19,35 @@ Currently, the package focuses on 2d related utilities, but functions for 3d mat
     - [float2x2 OuterProduct(float2 a, float2 b)](#float2x2-outerproductfloat2-a-float2-b)
     - [void PolarDecomposition(float2x2 A, out float2x2 U)](#void-polardecompositionfloat2x2-a-out-float2x2-u)
     - [void PolarDecomposition(float2x2 A, out float2x2 U, out float2x2 P)](#void-polardecompositionfloat2x2-a-out-float2x2-u-out-float2x2-p)
+    - [float2 Right()](#float2-right)
     - [float2 Rotate90CCW(this float2 a)](#float2-rotate90ccwthis-float2-a)
     - [float2 Rotate90CW(this float2 a)](#float2-rotate90cwthis-float2-a)
     - [float2x2 ToDiag(this float2 a)](#float2x2-todiagthis-float2-a)
     - [float2x2 Transform(this float2x2 M, float2x2 A)](#float2x2-transformthis-float2x2-m-float2x2-a)
+    - [float2 Up()](#float2-up)
   - [Primitives](#primitives)
     - [(float2 p, float r) TriangleBoundingCircle(float2 a, float2 b, float2 c)](#float2-p-float-r-triangleboundingcirclefloat2-a-float2-b-float2-c)
     - [(float2 p, float r) TriangleCircumcenter(float2 a, float2 b, float2 c)](#float2-p-float-r-trianglecircumcenterfloat2-a-float2-b-float2-c)
     - [float TriangleSignedArea(float2 a, float2 b, float2 c)](#float-trianglesignedareafloat2-a-float2-b-float2-c)
     - [float TriangleSignedArea2(float2 a, float2 b, float2 c)](#float-trianglesignedarea2float2-a-float2-b-float2-c)
   - [Geometry](#geometry)
+    - [float2 Barycentric(float2 a, float2 b, float2 p)](#float2-barycentricfloat2-a-float2-b-float2-p)
+    - [float3 Barycentric(float2 a, float2 b, float2 c, float2 p)](#float3-barycentricfloat2-a-float2-b-float2-c-float2-p)
+    - [float2 BarycentricSafe(float2 a, float2 b, float2 p, float2 @default = default)](#float2-barycentricsafefloat2-a-float2-b-float2-p-float2-default--default)
+    - [float3 BarycentricSafe(float2 a, float2 b, float2 c, float2 p, float3 @default = default)](#float3-barycentricsafefloat2-a-float2-b-float2-c-float2-p-float3-default--default)
+    - [float CCW(float2 a, float2 b, float2 c)](#float-ccwfloat2-a-float2-b-float2-c)
+    - [bool IsConvexQuadrilateral(float2 a, float2 b, float2 c, float2 d)](#bool-isconvexquadrilateralfloat2-a-float2-b-float2-c-float2-d)
     - [void PointClosestPointOnLineSegment(float2 a, float2 b0, float2 b1, out float2 p)](#void-pointclosestpointonlinesegmentfloat2-a-float2-b0-float2-b1-out-float2-p)
     - [bool PointInsideTriangle(float2 p, float2 a, float2 b, float2 c)](#bool-pointinsidetrianglefloat2-p-float2-a-float2-b-float2-c)
     - [float PointLineSignedDistance(float2 p, float2 n, float2 a)](#float-pointlinesigneddistancefloat2-p-float2-n-float2-a)
     - [void ShortestLineSegmentBetweenLineSegments(float2 a0, float2 a1, float2 b0, float2 b1, out float2 pA, out float2 pB)](#void-shortestlinesegmentbetweenlinesegmentsfloat2-a0-float2-a1-float2-b0-float2-b1-out-float2-pa-out-float2-pb)
   - [Misc](#misc)
     - [int BilateralInterleavingId(int id, int count)](#int-bilateralinterleavingidint-id-int-count)
+    - [int2 ConvertFromTriMatId(int index)](#int2-convertfromtrimatidint-index)
+    - [int ConvertToTriMatId(int i, int j)](#int-converttotrimatidint-i-int-j)
+    - [float Round(float value, int digits)](#float-roundfloat-value-int-digits)
+    - [float2 Round(float value, int digits)](#float2-roundfloat-value-int-digits)
+    - [float3 Round(float value, int digits)](#float3-roundfloat-value-int-digits)
   - [Complex](#complex)
     - [Complex Conjugate(Complex z)](#complex-conjugatecomplex-z)
     - [Complex LookRotation(float2 direction)](#complex-lookrotationfloat2-direction)
@@ -105,6 +118,10 @@ Procedure solves polar decomposition problem for matrix _A_,
 formulated as _A_ = _U_ · _P_, where _U_ a is unitary matrix
 and _P_ is a positive semi-definite Hermitian matrix.
 
+### float2 Right()
+
+Right axis (1, 0).
+
 ### float2 Rotate90CCW(this float2 a)
 
 Rotated vector _a_ by 90° (counter-clockwise).
@@ -120,6 +137,10 @@ Diagonal matrix with values _a_ placed in the diagonal.
 ### float2x2 Transform(this float2x2 M, float2x2 A)
 
 Transformed matrix _M_, with given transformation _A_, i.e. _A · M · Aᵀ_.
+
+### float2 Up()
+
+Up axis (0, 1).
 
 ## Primitives
 
@@ -140,6 +161,37 @@ Signed area of triangle _(a, b, c)_.
 Doubled signed area of triangle  _(a, b, c)_.
 
 ## Geometry
+
+### float2 Barycentric(float2 a, float2 b, float2 p)
+
+Position _p_ expressed in barycentric coordinate system defined within line segment _(a, b)_.
+
+### float3 Barycentric(float2 a, float2 b, float2 c, float2 p)
+
+Position _p_ expressed in barycentric coordinate system defined within triangle _(a, b, c)_.
+
+### float2 BarycentricSafe(float2 a, float2 b, float2 p, float2 @default = default)
+
+Position _p_ expressed in barycentric coordinate system defined within line segment _(a, b)_.
+If the result is not finite, then returns _default_.
+
+### float3 BarycentricSafe(float2 a, float2 b, float2 c, float2 p, float3 @default = default)
+
+Position _p_ expressed in barycentric coordinate system defined within triangle _(a, b, c)_.
+If the result is not finite, then returns _default_.
+
+### float CCW(float2 a, float2 b, float2 c)
+
+Triangle _(a, b, c)_ counterclockwise check.
+
+Returns:
+- **+1** triangle is counterclockwise.
+- **0** triangle is degenerate (colinear points).
+- **-1** triangle is clockwise.
+
+### bool IsConvexQuadrilateral(float2 a, float2 b, float2 c, float2 d)
+
+_true_ if quadrilateral _(a, b, c, d)_ is convex, _false_ otherwise.
 
 ### void PointClosestPointOnLineSegment(float2 a, float2 b0, float2 b1, out float2 p)
 
@@ -164,6 +216,28 @@ Procedure finds the shortest line segment _(pA, pB)_, between line segments _(a0
 Utility function for _id_ enumeration in bilateral interleaving order,
 e.g. sequence of _id_ = 0, 1, 2, 3, 4, 5 (_count_ = 6),
 will be enumerated in the following way: 0, 5, 1, 4, 2, 3.
+
+### int2 ConvertFromTriMatId(int index)
+
+Utility function for converting linear index into 2-d index for lower triangular matrix, stored in a row-wise fashion.
+
+Based on the paper[^angeletti.bonny.2019].
+
+### int ConvertToTriMatId(int i, int j)
+
+Utility function for converting 2-d index into linear index for lower triangular matrix, stored in a row-wise fashion.
+
+### float Round(float value, int digits)
+
+Rounds _value_ with respect to given _digits_.
+
+### float2 Round(float value, int digits)
+
+Rounds _value_ with respect to given _digits_.
+
+### float3 Round(float value, int digits)
+
+Rounds _value_ with respect to given _digits_.
 
 ## Complex
 
@@ -233,3 +307,5 @@ Repciprocal of _z_, i.e. _z⁻¹_.
 ## Contributors
 
 - [Andrzej Więckowski, Ph.D](https://andywiecko.github.io/).
+
+[^angeletti.bonny.2019]:M. Angeletti, J-M. Bonny, and J. Koko. ["Parallel Euclidean distance matrix computation on big datasets."](https://hal.archives-ouvertes.fr/hal-02047514/document) (2019).
