@@ -3,6 +3,7 @@ name: Run edit/player tests
 on:
   pull_request: {}
   push: { branches: [main] }
+  workflow_dispatch:
 
 env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
