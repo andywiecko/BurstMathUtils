@@ -1,5 +1,7 @@
 # BurstMathUtils
 
+[![Editor tests](https://github.com/andywiecko/BurstMathUtils/actions/workflows/test.yml/badge.svg)](https://github.com/andywiecko/BurstMathUtils/actions/workflows/test.yml)
+
 Burst compatible miscellaneous math related utility functions.
 
 Currently, the package focuses on 2d related utilities, but functions for 3d math will be added as well.
