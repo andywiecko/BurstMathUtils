@@ -4,6 +4,94 @@ namespace andywiecko.BurstMathUtils
 {
     public static partial class MathUtils
     {
+        /// <param name="a">Line segment (<paramref name="a"/>, <paramref name="b"/> vertex position.</param>
+        /// <param name="b">Line segment (<paramref name="a"/>, <paramref name="b"/> vertex position.</param>
+        /// <param name="p">Target position</param>
+        /// <returns>
+        /// Position <paramref name="p"/> expressed in barycentric coordinate system
+        /// defined within line segment (<paramref name="a"/>, <paramref name="b"/>).
+        /// </returns>
+        public static float2 Barycentric(float2 a, float2 b, float2 p)
+        {
+            var norm2 = math.distancesq(a, b);
+            var t = math.dot(p - b, a - b) / norm2;
+            return math.float2(t, 1 - t);
+        }
+
+        /// <param name="a">Triangle (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>) vertex position.</param>
+        /// <param name="b">Triangle (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>) vertex position.</param>
+        /// <param name="c">Triangle (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>) vertex position.</param>
+        /// <returns>
+        /// Position <paramref name="p"/> expressed in barycentric coordinate system
+        /// defined within triangle (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>).
+        /// </returns>
+        public static float3 Barycentric(float2 a, float2 b, float2 c, float2 p)
+        {
+            var (v0, v1, v2) = (b - a, c - a, p - a);
+            var denInv = 1 / Cross(v0, v1);
+            var v = denInv * Cross(v2, v1);
+            var w = denInv * Cross(v0, v2);
+            var u = 1.0f - v - w;
+            return math.float3(u, v, w);
+        }
+
+        /// <param name="a">Line segment (<paramref name="a"/>, <paramref name="b"/> vertex position.</param>
+        /// <param name="b">Line segment (<paramref name="a"/>, <paramref name="b"/> vertex position.</param>
+        /// <param name="p">Target position</param>
+        /// <returns>
+        /// Position <paramref name="p"/> expressed in barycentric coordinate system
+        /// defined within line segment (<paramref name="a"/>, <paramref name="b"/>).
+        /// If the result is not finite, then returns <paramref name="default"/>.
+        /// </returns>
+        public static float2 BarycentricSafe(float2 a, float2 b, float2 p, float2 @default = default)
+        {
+            return math.distancesq(a, b) <= math.EPSILON ? @default : Barycentric(a, b, p);
+        }
+
+        /// <param name="a">Triangle (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>) vertex position.</param>
+        /// <param name="b">Triangle (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>) vertex position.</param>
+        /// <param name="c">Triangle (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>) vertex position.</param>
+        /// <returns>
+        /// Position <paramref name="p"/> expressed in barycentric coordinate system
+        /// defined within triangle (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>).
+        /// If the result is not finite, then returns <paramref name="default"/>.
+        /// </returns>
+        public static float3 BarycentricSafe(float2 a, float2 b, float2 c, float2 p, float3 @default = default)
+        {
+            var (v0, v1) = (b - a, c - a);
+            var den = Cross(v0, v1);
+            return math.abs(den) <= math.EPSILON ? @default : Barycentric(a, b, c, p);
+        }
+
+        /// <summary>
+        /// Triangle (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>) 
+        /// counterclockwise check.
+        /// </summary>
+        /// <param name="a">Triangle (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>) vertex position.</param>
+        /// <param name="b">Triangle (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>) vertex position.</param>
+        /// <param name="c">Triangle (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>) vertex position.</param>
+        /// <returns>
+        /// <list type="bullet">
+        /// <item><see langword="+1"/> ? triangle is counterclockwise.</item>
+        /// <item><see langword="0"/> ? triangle is degenerate (colinear points).</item>
+        /// <item><see langword="-1"/> ? triangle is clockwise.</item>
+        /// </list>
+        /// </returns>
+        public static float CCW(float2 a, float2 b, float2 c) => math.sign(Cross(b - a, c - a));
+
+        /// <param name="a">Quadrilateral (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>, <paramref name="d"/>) vertex position.</param>
+        /// <param name="b">Quadrilateral (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>, <paramref name="d"/>) vertex position.</param>
+        /// <param name="c">Quadrilateral (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>, <paramref name="d"/>) vertex position.</param>
+        /// <param name="d">Quadrilateral (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>, <paramref name="d"/>) vertex position.</param>
+        /// <returns>
+        /// <see langword="true"/> if quadrilateral 
+        /// (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>, <paramref name="d"/>)
+        /// is convex, <see langword="false"/> otherwise.
+        /// </returns>
+        public static bool IsConvexQuadrilateral(float2 a, float2 b, float2 c, float2 d) =>
+            CCW(a, c, b) != 0 && CCW(a, c, d) != 0 && CCW(b, d, a) != 0 && CCW(b, d, c) != 0 && // colinear checks
+            CCW(a, c, b) != CCW(a, c, d) && CCW(b, d, a) != CCW(b, d, c); // diagonal intersection checks
+
         /// <summary>
         /// Procedure finds the closest point <paramref name="p"/> 
         /// on the line segment (<paramref name="b0"/>, <paramref name="b1"/>)
@@ -39,19 +127,14 @@ namespace andywiecko.BurstMathUtils
         /// (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>), 
         /// <see langword="false"/> otherwise.
         /// </returns>
-        public static bool PointInsideTriangle(float2 p, float2 a, float2 b, float2 c)
-        {
-            var area2inv = 1 / Cross(b - a, c - a);
-            var s = area2inv * (a.y * c.x - a.x * c.y + (c.y - a.y) * p.x + (a.x - c.x) * p.y);
-            var t = area2inv * (a.x * b.y - a.y * b.x + (a.y - b.y) * p.x + (b.x - a.x) * p.y);
-            return s >= 0 && t >= 0 && 1 - s - t >= 0;
-        }
+        public static bool PointInsideTriangle(float2 p, float2 a, float2 b, float2 c) =>
+            math.cmax(-Barycentric(a, b, c, p)) <= 0;
 
         /// <param name="p">Point of interest.</param>
         /// <param name="n">Line normal.</param>
         /// <param name="a">Point on the line.</param>
         /// <returns>
-        /// Point–line signed distance.
+        /// Pointâ€“line signed distance.
         /// </returns>
         public static float PointLineSignedDistance(float2 p, float2 n, float2 a) => math.dot(p - a, n);
 
