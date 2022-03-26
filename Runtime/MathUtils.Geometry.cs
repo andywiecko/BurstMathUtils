@@ -89,8 +89,21 @@ namespace andywiecko.BurstMathUtils
         /// is convex, <see langword="false"/> otherwise.
         /// </returns>
         public static bool IsConvexQuadrilateral(float2 a, float2 b, float2 c, float2 d) =>
-            CCW(a, c, b) != 0 && CCW(a, c, d) != 0 && CCW(b, d, a) != 0 && CCW(b, d, c) != 0 && // colinear checks
+            CCW(a, c, b) != 0 && CCW(a, c, d) != 0 && CCW(b, d, a) != 0 && CCW(b, d, c) != 0 && // collinear checks
             CCW(a, c, b) != CCW(a, c, d) && CCW(b, d, a) != CCW(b, d, c); // diagonal intersection checks
+
+        public static bool LineSegmentLineSegmentCollinearAndOverlaping(float2 a0, float2 a1, float2 b0, float2 b1) =>
+            CCW(a0, a1, b0) == 0 && CCW(a0, a1, b1) == 0 && // collinear checks
+            math.all(math.max(a0, a1) >= math.min(b0, b1)) && // AABB checks
+            math.all(math.min(a0, a1) <= math.max(b0, b1));
+
+        public static bool LineSegmentLineSegmentIntersection(float2 a0, float2 a1, float2 b0, float2 b1) =>
+            LineSegmentLineSegmentCollinearAndOverlaping(a0, a1, b0, b1) ||
+            CCW(a0, a1, b0) != CCW(a0, a1, b1) && CCW(b0, b1, a0) != CCW(b0, b1, a1);
+
+        public static bool PointLineSegmentIntersection(float2 a, float2 b0, float2 b1) =>
+            CCW(b0, b1, a) == 0 &&  // collinear checks
+            math.all(a >= math.min(b0, b1) & a <= math.max(b0, b1)); // AABB contains a
 
         /// <summary>
         /// Procedure finds the closest point <paramref name="p"/> 

@@ -40,8 +40,188 @@ namespace andywiecko.BurstMathUtils.Editor.Tests
         [Test, TestCaseSource(nameof(barycentric3TestData))]
         public float3 Barycentric3Test(float2 a, float2 b, float2 c, float2 p) => MathUtils.Round(MathUtils.Barycentric(a, b, c, p), 6);
 
-        private static readonly TestCaseData[] shortestLineSegmentBetweenLineSegmentsTestData = new[]
+        private static readonly TestCaseData[] CCWTestData = new[]
         {
+            new TestCaseData(math.float2(0, 0), math.float2(1, 0), math.float2(0.5f, 1))
+            { ExpectedResult = 1f, TestName = "Case 1 (counter clock wise"},
+            new TestCaseData(math.float2(0, 0), math.float2(0.5f, 1), math.float2(1, 0))
+            { ExpectedResult = -1f, TestName = "Case 2 (clock wise"},
+            new TestCaseData(math.float2(0, 0), math.float2(1, 0), math.float2(2, 0))
+            { ExpectedResult = 0f, TestName = "Case 3 (colinear"}
+        }.SelectMany(i =>
+        {
+            var args = i.OriginalArguments;
+            var (a, b, c) = (args[0], args[1], args[2]);
+            return new[]
+            {
+                new TestCaseData(a, b, c) { TestName = i.TestName + ", perm 0)", ExpectedResult = i.ExpectedResult },
+                new TestCaseData(c, a, b) { TestName = i.TestName + ", perm 1)", ExpectedResult = i.ExpectedResult },
+                new TestCaseData(b, c, a) { TestName = i.TestName + ", perm 2)", ExpectedResult = i.ExpectedResult },
+            };
+        }).ToArray();
+
+        [Test, TestCaseSource(nameof(CCWTestData))]
+        public float CCWTest(float2 a, float2 b, float2 c) => MathUtils.CCW(a, b, c);
+
+        private static readonly TestCaseData[] isConvexQuadrilateralTestData = new[]
+        {
+            new TestCaseData(math.float2(0, 0), math.float2(4, 0), math.float2(4, 1), math.float2(0, 1))
+            { TestName = "Case 1 (convex, rectangle", ExpectedResult = true },
+            new TestCaseData(math.float2(0, 0), math.float2(8, 0), math.float2(1, 1), math.float2(0, 8))
+            { TestName = "Case 2 (concave, dart", ExpectedResult = false },
+            new TestCaseData(math.float2(0, 0), math.float2(2, 1), math.float2(2, 0), math.float2(0, 2))
+            { TestName = "Case 3 (reflect", ExpectedResult = false },
+            new TestCaseData(math.float2(0, 0), math.float2(1, 0), math.float2(2, 0), math.float2(2, 2))
+            { TestName = "Case 4 (colinear 3-point", ExpectedResult = false },
+            new TestCaseData(math.float2(0, 0), math.float2(1, 0), math.float2(2, 0), math.float2(3, 0))
+            { TestName = "Case 5 (colinear 4-point", ExpectedResult = false },
+        }.SelectMany(i =>
+        {
+            var args = i.OriginalArguments;
+            var (a, b, c, d) = (args[0], args[1], args[2], args[3]);
+            return new[]
+            {
+                new TestCaseData(a, b, c, d) { TestName = i.TestName + ", perm 0)", ExpectedResult = i.ExpectedResult },
+                new TestCaseData(d, a, b, c) { TestName = i.TestName + ", perm 1)", ExpectedResult = i.ExpectedResult },
+                new TestCaseData(c, d, a, b) { TestName = i.TestName + ", perm 2)", ExpectedResult = i.ExpectedResult },
+                new TestCaseData(b, c, d, a) { TestName = i.TestName + ", perm 3)", ExpectedResult = i.ExpectedResult },
+            };
+        }).ToArray();
+
+        [Test, TestCaseSource(nameof(isConvexQuadrilateralTestData))]
+        public bool IsConvexQuadrilateralTest(float2 a, float2 b, float2 c, float2 d) => MathUtils.IsConvexQuadrilateral(a, b, c, d);
+
+        private static readonly TestCaseData[] lineSegmentLineSegmentCollinearAndOverlapingTestData = new[]
+        {
+            new TestCaseData(
+                math.float2(0, 0), math.float2(1, 1),
+                math.float2(0, 1), math.float2(1, 0)
+            )
+            { TestName = "Test case 1 (non-collinear, intersecting", ExpectedResult = false },
+            new TestCaseData(
+                math.float2(0, 0), math.float2(2, 0),
+                math.float2(1, 0), math.float2(1, 1)
+            )
+            { TestName = "Test case 2 (non-collinear, common point", ExpectedResult = false },
+            new TestCaseData(
+                math.float2(2, 0), math.float2(3, 1),
+                math.float2(0, 1), math.float2(1, 0)
+            )
+            { TestName = "Test case 3 (non-collinear, non-intersecting", ExpectedResult = false },
+            new TestCaseData(
+                math.float2(0, 0), math.float2(1, 1),
+                math.float2(2, 2), math.float2(3, 3)
+            )
+            { TestName = "Test case 4 (collinear, non-overlapping", ExpectedResult = false },
+            new TestCaseData(
+                math.float2(0, 0), math.float2(2, 2),
+                math.float2(1, 1), math.float2(3, 3)
+            )
+            { TestName = "Test case 5 (collinear, overlapping", ExpectedResult = true },
+            new TestCaseData(
+                math.float2(0, 0), math.float2(1, 1),
+                math.float2(1, 1), math.float2(3, 3)
+            )
+            { TestName = "Test case 6 (collinear, common point", ExpectedResult = true },
+        }.SelectMany(i =>
+        {
+            var args = i.OriginalArguments;
+            var (a0, a1, b0, b1) = (args[0], args[1], args[2], args[3]);
+            return new[]
+            {
+                new TestCaseData(a0, a1, b0, b1) { TestName = i.TestName + ", perm 0)", ExpectedResult = i.ExpectedResult },
+                new TestCaseData(a0, a1, b1, b0) { TestName = i.TestName + ", perm 1)", ExpectedResult = i.ExpectedResult },
+                new TestCaseData(a1, a0, b0, b1) { TestName = i.TestName + ", perm 2)", ExpectedResult = i.ExpectedResult },
+                new TestCaseData(a1, a0, b1, b0) { TestName = i.TestName + ", perm 3)", ExpectedResult = i.ExpectedResult },
+            };
+        }).ToArray();
+
+        [Test, TestCaseSource(nameof(lineSegmentLineSegmentCollinearAndOverlapingTestData))]
+        public bool LineSegmentLineSegmentCollinearAndOverlappingTest(float2 a0, float2 a1, float2 b0, float2 b1) =>
+            MathUtils.LineSegmentLineSegmentCollinearAndOverlaping(a0, a1, b0, b1);
+
+        private static readonly TestCaseData[] lineSegmentLineSegmentIntersectionTestData = new[]
+        {
+            new TestCaseData(
+                math.float2(0, 0), math.float2(1, 1),
+                math.float2(0, 1), math.float2(1, 0)
+            )
+            { TestName = "Test case 1 (non-collinear, intersecting", ExpectedResult = true },
+            new TestCaseData(
+                math.float2(0, 0), math.float2(2, 0),
+                math.float2(1, 0), math.float2(1, 1)
+            )
+            { TestName = "Test case 2 (non-collinear, common point", ExpectedResult = true },
+            new TestCaseData(
+                math.float2(2, 0), math.float2(3, 1),
+                math.float2(0, 1), math.float2(1, 0)
+            )
+            { TestName = "Test case 3 (non-collinear, non-intersecting", ExpectedResult = false },
+            new TestCaseData(
+                math.float2(0, 0), math.float2(1, 1),
+                math.float2(2, 2), math.float2(3, 3)
+            )
+            { TestName = "Test case 4 (collinear, non-overlapping", ExpectedResult = false },
+            new TestCaseData(
+                math.float2(0, 0), math.float2(2, 2),
+                math.float2(1, 1), math.float2(3, 3)
+            )
+            { TestName = "Test case 5 (collinear, overlapping", ExpectedResult = true },
+            new TestCaseData(
+                math.float2(0, 0), math.float2(1, 1),
+                math.float2(1, 1), math.float2(3, 3)
+            )
+            { TestName = "Test case 6 (collinear, common point", ExpectedResult = true },
+        }.SelectMany(i =>
+        {
+            var args = i.OriginalArguments;
+            var (a0, a1, b0, b1) = (args[0], args[1], args[2], args[3]);
+            return new[]
+            {
+                new TestCaseData(a0, a1, b0, b1) { TestName = i.TestName + ", perm 0)", ExpectedResult = i.ExpectedResult },
+                new TestCaseData(a0, a1, b1, b0) { TestName = i.TestName + ", perm 1)", ExpectedResult = i.ExpectedResult },
+                new TestCaseData(a1, a0, b0, b1) { TestName = i.TestName + ", perm 2)", ExpectedResult = i.ExpectedResult },
+                new TestCaseData(a1, a0, b1, b0) { TestName = i.TestName + ", perm 3)", ExpectedResult = i.ExpectedResult },
+            };
+        }).ToArray();
+
+        [Test, TestCaseSource(nameof(lineSegmentLineSegmentIntersectionTestData))]
+        public bool LineSegmentLineSegmentIntersectionTest(float2 a0, float2 a1, float2 b0, float2 b1) =>
+            MathUtils.LineSegmentLineSegmentIntersection(a0, a1, b0, b1);
+
+        private static readonly TestCaseData[] pointLineSegmentIntersectionTestData = new[]
+        {
+            new TestCaseData(
+                math.float2(2, 0),
+                math.float2(0, 1), math.float2(1, 0)
+            )
+            { TestName = "Test case 1 (non-collinear, non-intersecting", ExpectedResult = false },
+            new TestCaseData(
+                math.float2(0, 0),
+                math.float2(2, 2), math.float2(3, 3)
+            )
+            { TestName = "Test case 2 (collinear, non-overlapping", ExpectedResult = false },
+            new TestCaseData(
+                math.float2(2, 2),
+                math.float2(1, 1), math.float2(3, 3)
+            )
+            { TestName = "Test case 3 (collinear, overlapping", ExpectedResult = true },
+        }.SelectMany(i =>
+        {
+            var args = i.OriginalArguments;
+            var (a, b0, b1) = (args[0], args[1], args[2]);
+            return new[]
+            {
+                new TestCaseData(a, b0, b1) { TestName = i.TestName + ", perm 0)", ExpectedResult = i.ExpectedResult },
+                new TestCaseData(a, b1, b0) { TestName = i.TestName + ", perm 1)", ExpectedResult = i.ExpectedResult },
+            };
+        }).ToArray();
+
+        [Test, TestCaseSource(nameof(pointLineSegmentIntersectionTestData))]
+        public bool PointLineSegmentIntersectionTest(float2 a, float2 b0, float2 b1) => MathUtils.PointLineSegmentIntersection(a, b0, b1);
+
+        private static readonly TestCaseData[] shortestLineSegmentBetweenLineSegmentsTestData = new[]
+       {
             new TestCaseData
             ((
                 a0: math.float2(0, 0),
@@ -142,57 +322,6 @@ namespace andywiecko.BurstMathUtils.Editor.Tests
                 ExpectedResult = (pA: math.float2(0, 0), pB: math.float2(0, 0))
             }
         };
-
-        private static readonly TestCaseData[] CCWTestData = new[]
-        {
-            new TestCaseData(math.float2(0, 0), math.float2(1, 0), math.float2(0.5f, 1))
-            { ExpectedResult = 1f, TestName = "Case 1 (counter clock wise"},
-            new TestCaseData(math.float2(0, 0), math.float2(0.5f, 1), math.float2(1, 0))
-            { ExpectedResult = -1f, TestName = "Case 2 (clock wise"},
-            new TestCaseData(math.float2(0, 0), math.float2(1, 0), math.float2(2, 0))
-            { ExpectedResult = 0f, TestName = "Case 3 (colinear"}
-        }.SelectMany(i =>
-        {
-            var args = i.OriginalArguments;
-            var (a, b, c) = (args[0], args[1], args[2]);
-            return new[]
-            {
-                new TestCaseData(a, b, c) { TestName = i.TestName + ", perm 0)", ExpectedResult = i.ExpectedResult },
-                new TestCaseData(c, a, b) { TestName = i.TestName + ", perm 1)", ExpectedResult = i.ExpectedResult },
-                new TestCaseData(b, c, a) { TestName = i.TestName + ", perm 2)", ExpectedResult = i.ExpectedResult },
-            };
-        }).ToArray();
-
-        [Test, TestCaseSource(nameof(CCWTestData))]
-        public float CCWTest(float2 a, float2 b, float2 c) => MathUtils.CCW(a, b, c);
-
-        private static readonly TestCaseData[] isConvexQuadrilateralTestData = new[]
-        {
-            new TestCaseData(math.float2(0, 0), math.float2(4, 0), math.float2(4, 1), math.float2(0, 1))
-            { TestName = "Case 1 (convex, rectangle", ExpectedResult = true },
-            new TestCaseData(math.float2(0, 0), math.float2(8, 0), math.float2(1, 1), math.float2(0, 8))
-            { TestName = "Case 2 (concave, dart", ExpectedResult = false },
-            new TestCaseData(math.float2(0, 0), math.float2(2, 1), math.float2(2, 0), math.float2(0, 2))
-            { TestName = "Case 3 (reflect", ExpectedResult = false },
-            new TestCaseData(math.float2(0, 0), math.float2(1, 0), math.float2(2, 0), math.float2(2, 2))
-            { TestName = "Case 4 (colinear 3-point", ExpectedResult = false },
-            new TestCaseData(math.float2(0, 0), math.float2(1, 0), math.float2(2, 0), math.float2(3, 0))
-            { TestName = "Case 5 (colinear 4-point", ExpectedResult = false },
-        }.SelectMany(i =>
-        {
-            var args = i.OriginalArguments;
-            var (a, b, c, d) = (args[0], args[1], args[2], args[3]);
-            return new[]
-            {
-                new TestCaseData(a, b, c, d) { TestName = i.TestName + ", perm 0)", ExpectedResult = i.ExpectedResult },
-                new TestCaseData(d, a, b, c) { TestName = i.TestName + ", perm 1)", ExpectedResult = i.ExpectedResult },
-                new TestCaseData(c, d, a, b) { TestName = i.TestName + ", perm 2)", ExpectedResult = i.ExpectedResult },
-                new TestCaseData(b, c, d, a) { TestName = i.TestName + ", perm 3)", ExpectedResult = i.ExpectedResult },
-            };
-        }).ToArray();
-
-        [Test, TestCaseSource(nameof(isConvexQuadrilateralTestData))]
-        public bool IsConvexQuadrilateralTest(float2 a, float2 b, float2 c, float2 d) => MathUtils.IsConvexQuadrilateral(a, b, c, d);
 
         [Test, TestCaseSource(nameof(shortestLineSegmentBetweenLineSegmentsTestData))]
         public (float2 pA, float2 pB) ShortestLineSegmentBetweenLineSegmentsTest((float2 a0, float2 a1, float2 b0, float2 b1) points)
