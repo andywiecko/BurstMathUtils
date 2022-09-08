@@ -16,6 +16,10 @@ namespace andywiecko.BurstMathUtils.Editor.Tests
             { ExpectedResult = math.float2(0, 1), TestName = "Case 3" },
             new TestCaseData(math.float2(0, 0), math.float2(1, 0), math.float2(-1, 0))
             { ExpectedResult = math.float2(2, -1), TestName = "Case 4" },
+            new TestCaseData(math.float2(-1, 0), math.float2(1, 0), math.float2(0, 0))
+            { ExpectedResult = math.float2(0.5f, 0.5f), TestName = "Case 5" },
+            new TestCaseData(math.float2(1, 0), math.float2(-1, 0), math.float2(0, 0))
+            { ExpectedResult = math.float2(0.5f, 0.5f), TestName = "Case 6" },
         };
 
         [Test, TestCaseSource(nameof(barycentric2TestData))]
