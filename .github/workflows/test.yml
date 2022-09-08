@@ -1,4 +1,4 @@
-name: Run edit/player tests
+name: Editor tests
 
 on:
   pull_request: {}
