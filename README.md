@@ -70,7 +70,7 @@ To use the package choose one of the following:
 
 - Clone or download this repository and then select `package.json` using Package Manager (`Window/Package Manager`).
 
-- Use package manager via git install: `https://github.com/andywiecko/BurstMathUtils.git#`. (Note: one can specify exact version with a proper tag: `https://github.com/andywiecko/BurstMathUtils.git#v1.2.0`)
+- Use package manager via git install: `https://github.com/andywiecko/BurstMathUtils.git`. (Note: one can specify exact version with a proper tag: `https://github.com/andywiecko/BurstMathUtils.git#v1.3.0`)
 
 ## Features
 
