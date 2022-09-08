@@ -41,6 +41,7 @@ Currently, the package focuses on 2d related utilities, but functions for 3d mat
     - [bool IsConvexQuadrilateral(float2 a, float2 b, float2 c, float2 d)](#bool-isconvexquadrilateralfloat2-a-float2-b-float2-c-float2-d)
     - [void PointClosestPointOnLineSegment(float2 a, float2 b0, float2 b1, out float2 p)](#void-pointclosestpointonlinesegmentfloat2-a-float2-b0-float2-b1-out-float2-p)
     - [bool PointInsideTriangle(float2 p, float2 a, float2 b, float2 c)](#bool-pointinsidetrianglefloat2-p-float2-a-float2-b-float2-c)
+    - [bool PointInsideTriangle(float2 p, float2 a, float2 b, float2 c, out float3 bar)](#bool-pointinsidetrianglefloat2-p-float2-a-float2-b-float2-c-out-float3-bar)
     - [float PointLineSignedDistance(float2 p, float2 n, float2 a)](#float-pointlinesigneddistancefloat2-p-float2-n-float2-a)
     - [void ShortestLineSegmentBetweenLineSegments(float2 a0, float2 a1, float2 b0, float2 b1, out float2 pA, out float2 pB)](#void-shortestlinesegmentbetweenlinesegmentsfloat2-a0-float2-a1-float2-b0-float2-b1-out-float2-pa-out-float2-pb)
   - [Misc](#misc)
@@ -69,7 +70,7 @@ To use the package choose one of the following:
 
 - Clone or download this repository and then select `package.json` using Package Manager (`Window/Package Manager`).
 
-- Use package manager via git install: `https://github.com/andywiecko/BurstMathUtils.git`.
+- Use package manager via git install: `https://github.com/andywiecko/BurstMathUtils.git#`. (Note: one can specify exact version with a proper tag: `https://github.com/andywiecko/BurstMathUtils.git#v1.2.0`)
 
 ## Features
 
@@ -201,7 +202,12 @@ Procedure finds the closest point _p_ on the line segment _(b0, b1)_ to point _a
 
 ### bool PointInsideTriangle(float2 p, float2 a, float2 b, float2 c)
 
-_true_ if p is inside triangle _(a, b, c)_, _false_ otherwise.
+_true_ if _p_ is inside triangle _(a, b, c)_, _false_ otherwise.
+
+### bool PointInsideTriangle(float2 p, float2 a, float2 b, float2 c, out float3 bar)
+
+_true_ if _p_ is inside triangle _(a, b, c)_, _false_ otherwise.
+_bar_ corresponds to barycentric coordinates of _p_ in triangle _(a, b, c)_.
 
 ### float PointLineSignedDistance(float2 p, float2 n, float2 a)
 
