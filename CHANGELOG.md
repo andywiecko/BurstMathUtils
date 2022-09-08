@@ -1,6 +1,12 @@
 # Change log
 
-## [1.2.0] ⁠– 2022-16-03
+## [1.3.0] ⁠– 2022-09-08
+
+### Features
+
+- Added `PointInsideTriangle` variant with `out var bar`.
+
+## [1.2.0] ⁠– 2022-03-16
 
 ### Features
 
@@ -11,7 +17,7 @@
 
 - _PointInsideTriangle_ method has been optimized.
 
-## [1.1.0] ⁠– 2021-18-12
+## [1.1.0] ⁠– 2021-12-18
 
 ### Features
 
