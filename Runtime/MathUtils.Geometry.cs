@@ -127,8 +127,23 @@ namespace andywiecko.BurstMathUtils
         /// (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>), 
         /// <see langword="false"/> otherwise.
         /// </returns>
-        public static bool PointInsideTriangle(float2 p, float2 a, float2 b, float2 c) =>
-            math.cmax(-Barycentric(a, b, c, p)) <= 0;
+        public static bool PointInsideTriangle(float2 p, float2 a, float2 b, float2 c) => PointInsideTriangle(p, a, b, c, out _);
+
+        /// <param name="p">Point of interest.</param>
+        /// <param name="a">Triangle (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>) vertex position.</param>
+        /// <param name="b">Triangle (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>) vertex position.</param>
+        /// <param name="c">Triangle (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>) vertex position.</param>
+        /// <param name="bar">Barycentric coordinates of point <paramref name="p"/> using (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>) triangle.</param>
+        /// <returns>
+        /// <see langword="true"/> if <paramref name="p"/> is inside triangle 
+        /// (<paramref name="a"/>, <paramref name="b"/>, <paramref name="c"/>), 
+        /// <see langword="false"/> otherwise.
+        /// </returns>
+        public static bool PointInsideTriangle(float2 p, float2 a, float2 b, float2 c, out float3 bar)
+        {
+            bar = Barycentric(a, b, c, p);
+            return math.cmax(-bar) <= 0;
+        }
 
         /// <param name="p">Point of interest.</param>
         /// <param name="n">Line normal.</param>
