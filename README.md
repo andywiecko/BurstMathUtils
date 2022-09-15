@@ -1,6 +1,7 @@
 # BurstMathUtils
 
 [![Editor tests](https://github.com/andywiecko/BurstMathUtils/actions/workflows/test.yml/badge.svg)](https://github.com/andywiecko/BurstMathUtils/actions/workflows/test.yml)
+[![openupm](https://img.shields.io/npm/v/com.andywiecko.burst.mathutils?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.andywiecko.burst.mathutils/)
 
 Burst compatible miscellaneous math related utility functions.
 
@@ -62,15 +63,44 @@ Currently, the package focuses on 2d related utilities, but functions for 3d mat
     - [Complex Pow(Complex z, float x)](#complex-powcomplex-z-float-x)
     - [Complex Reciprocal(Complex z)](#complex-reciprocalcomplex-z)
   - [Dependencies](#dependencies)
-  - [Contributors](#contributors)
 
 ## Getting started
 
-To use the package choose one of the following:
+Install the package using one of the following methods
 
-- Clone or download this repository and then select `package.json` using Package Manager (`Window/Package Manager`).
+<details open>
+<summary> Using scoped registry <b>(recommended)</b> </summary>
+Use OpenUPM CLI or add corresponding entries to the project's <code>manifest.json</code> manually.
+Add or modify scoped registries in the manifest
+<pre>
+  "scopedRegistries": [
+    {
+      "name": "OpenUPM",
+      "url": "https://package.openupm.com/",
+      "scopes": [
+        "com.andywiecko"
+      ]
+    }
+  ]
+</pre>
+and in the dependencies provide selected version of the package
+<pre>
+"dependencies": {
+    "com.andywiecko.burst.mathutils": "1.3.0",
+    ...
+</pre>
+See Unity docs for more details https://docs.unity3d.com/2021.1/Documentation/Manual/upm-scoped.html
+</details>
 
-- Use package manager via git install: `https://github.com/andywiecko/BurstMathUtils.git`. (Note: one can specify exact version with a proper tag: `https://github.com/andywiecko/BurstMathUtils.git#v1.3.0`)
+<details>
+<summary> <code>git</code> install </summary>
+Use package manager via git install: https://github.com/andywiecko/BurstMathUtils.git#v1.3.0
+</details>
+
+<details>
+<summary> Manual instalation </summary>
+Clone or download this repository and then select <code>package.json</code> using Package Manager (<code>Window/Package Manager</code>).
+</details>
 
 ## Features
 
@@ -311,9 +341,5 @@ Repciprocal of _z_, i.e. _z⁻¹_.
 - [`Unity.Mathematics`](https://docs.unity3d.com/Packages/com.unity.mathematics@1.2/manual/index.html)
 - [`Unity.Collections`](https://docs.unity3d.com/Packages/com.unity.collections@1.0/manual/index.html)
 - [`Unity.Jobs`](https://docs.unity3d.com/Packages/com.unity.jobs@0.11/manual/index.html)
-
-## Contributors
-
-- [Andrzej Więckowski, Ph.D](https://andywiecko.github.io/).
 
 [^angeletti.bonny.2019]:M. Angeletti, J-M. Bonny, and J. Koko. ["Parallel Euclidean distance matrix computation on big datasets."](https://hal.archives-ouvertes.fr/hal-02047514/document) (2019).
