@@ -69,7 +69,7 @@ namespace andywiecko.BurstMathUtils
         public static Complex operator /(float x, Complex z) => x * Reciprocal(z);
         public static Complex operator /(Complex z, float x) => 1 / x * z;
         public static bool operator ==(Complex z1, Complex z2) => math.all(z1.Value == z2.Value);
-        public static bool operator !=(Complex z1, Complex z2) => math.all(z1.Value != z2.Value);
+        public static bool operator !=(Complex z1, Complex z2) => math.any(z1.Value != z2.Value);
         public bool Equals(Complex z) => math.all(Value == z.Value);
         public override bool Equals(object other) => other is Complex z && Equals(z);
         public override int GetHashCode() => (int)math.hash(Value);
