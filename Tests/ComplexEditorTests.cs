@@ -34,6 +34,7 @@ namespace andywiecko.BurstMathUtils.Editor.Tests
             Assert.That(z1 / x, Is.EqualTo(z1));
             Assert.That(z1 == z2, Is.False);
             Assert.That(z1 != z2, Is.True);
+            Assert.That((Complex)(0, 1) != (Complex)(0, 0), Is.True);
         }
 
         [Test]
