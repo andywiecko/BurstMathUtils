@@ -1,6 +1,6 @@
 {
     "name": "com.andywiecko.burst.mathutils",
-    "version": "1.3.0",
+    "version": "1.3.1",
     "displayName": "Burst Math Utils",
     "description": "Burst compatible miscellaneous math related utility functions.",
     "unity": "2021.2",

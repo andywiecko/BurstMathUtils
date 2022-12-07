@@ -1,5 +1,11 @@
 # Change log
 
+## [1.3.1] ⁠– 2022-12-07
+
+### Fixed
+
+- Fix `Complex` not equal operator `!=`.
+
 ## [1.3.0] ⁠– 2022-09-08
 
 ### Features

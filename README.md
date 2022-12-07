@@ -86,7 +86,7 @@ Add or modify scoped registries in the manifest
 and in the dependencies provide selected version of the package
 <pre>
 "dependencies": {
-    "com.andywiecko.burst.mathutils": "1.3.0",
+    "com.andywiecko.burst.mathutils": "1.3.1",
     ...
 </pre>
 See Unity docs for more details https://docs.unity3d.com/2021.1/Documentation/Manual/upm-scoped.html
@@ -94,7 +94,7 @@ See Unity docs for more details https://docs.unity3d.com/2021.1/Documentation/Ma
 
 <details>
 <summary> <code>git</code> install </summary>
-Use package manager via git install: https://github.com/andywiecko/BurstMathUtils.git#v1.3.0
+Use package manager via git install: https://github.com/andywiecko/BurstMathUtils.git#v1.3.1
 </details>
 
 <details>
@@ -218,6 +218,7 @@ If the result is not finite, then returns _default_.
 Triangle _(a, b, c)_ counterclockwise check.
 
 Returns:
+
 - **+1** triangle is counterclockwise.
 - **0** triangle is degenerate (colinear points).
 - **-1** triangle is clockwise.
