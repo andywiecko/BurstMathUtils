@@ -97,7 +97,11 @@ namespace andywiecko.BurstMathUtils.Editor.Tests
 
         private static readonly TestCaseData[] polarDecompositionTestData = new[]
         {
-            new TestCaseData(float2x2.identity) { TestName = "Case 1 � identity test.", ExpectedResult = float2x2.identity },
+            new TestCaseData(float2x2.identity) 
+            { 
+                TestName = "Case 1 – identity test.", 
+                ExpectedResult = float2x2.identity 
+            },
 
             new TestCaseData(math.float2x2
             (
@@ -105,7 +109,7 @@ namespace andywiecko.BurstMathUtils.Editor.Tests
                 math.sin(2.343f), math.cos(2.343f)
             ))
             {
-                TestName = "Case 2 � pure unitary test.",
+                TestName = "Case 2 – pure unitary test.",
                 ExpectedResult = math.float2x2
                 (
                     math.cos(2.343f), -math.sin(2.343f),
@@ -122,13 +126,35 @@ namespace andywiecko.BurstMathUtils.Editor.Tests
                 1, 3
             )))
             {
-                TestName = "Case 3 � general case",
+                TestName = "Case 3 – general case",
                 ExpectedResult = math.float2x2
                 (
                     math.cos(2.34f), -math.sin(2.34f),
                     math.sin(2.34f), math.cos(2.34f)
                 )
-            }
+            },
+
+            new TestCaseData(math.float2x2(0, 1, 1, 0))
+            {
+                TestName = "Case 4 – permutation case",
+                ExpectedResult = math.float2x2(0, 1, 1, 0)
+            },
+
+            new TestCaseData(math.float2x2(1, 0, 0, -1))
+            {
+                TestName = "Case 5 – reflection case",
+                ExpectedResult = math.float2x2(1, 0, 0, -1)
+            },
+
+            new TestCaseData(math.float2x2
+            (
+                math.cos(0.41f), math.sin(0.41f),
+                math.sin(0.41f), -math.cos(0.41f)
+            ))
+            {
+                TestName = "Case 6 – general reflection case",
+                ExpectedResult = math.float2x2(math.cos(0.41f), math.sin(0.41f), math.sin(0.41f), -math.cos(0.41f))
+            },
         };
 
         [Test, TestCaseSource(nameof(polarDecompositionTestData))]
