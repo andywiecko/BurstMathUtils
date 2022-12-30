@@ -67,7 +67,7 @@ namespace andywiecko.BurstMathUtils
         /// <param name="U">Unitary matrix.</param>
         public static void PolarDecomposition(float2x2 A, out float2x2 U)
         {
-            U = A + math.determinant(A) * math.inverse(math.transpose(A));
+            U = A + math.abs(math.determinant(A)) * math.inverse(math.transpose(A));
             U *= math.rsqrt(math.abs(math.determinant(U)));
         }
 
